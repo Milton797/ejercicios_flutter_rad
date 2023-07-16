@@ -132,18 +132,7 @@ class _Ejercicio22State extends State<Ejercicio22> {
             child: const Icon(Icons.list_alt),
             label: "Listar firmas",
             onTap: () async {
-              final items = await SQLHelper.getItems();
-
-              final signatures = items.map((item) {
-                return item.values.first;
-              }).toList();
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ImagesList(signatures),
-                ),
-              );
+              navigateToImagesList(context);
             },
           ),
           SpeedDialChild(
@@ -161,6 +150,23 @@ class _Ejercicio22State extends State<Ejercicio22> {
     super.initState();
 
     // Algo al iniciar el formulario
+  }
+
+  void navigateToImagesList(BuildContext context) async {
+    final items = await SQLHelper.getItems();
+
+    final signatures = items.map((item) {
+      return item.values.first;
+    }).toList();
+
+    Future<void>.delayed(Duration.zero, () {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImagesList(signatures),
+        ),
+      );
+    });
   }
 
   Widget selectColor(Color color) {
@@ -227,13 +233,13 @@ class _Ejercicio22State extends State<Ejercicio22> {
             const SizedBox(height: 10),
             Center(
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.primaries.first),
                 onPressed: () async {
-                  _saveDrawing(canvasSize);
-
-                  _nameController.clear();
-                  _descriptionController.clear();
+                  if (_nameController.text.isNotEmpty ||
+                      _descriptionController.text.isNotEmpty) {
+                    _saveDrawing(canvasSize);
+                  } else {
+                    _showToast("No se permiten valores vacíos");
+                  }
 
                   Navigator.pop(context);
                 },
@@ -281,6 +287,9 @@ class _Ejercicio22State extends State<Ejercicio22> {
         _descriptionController.text,
         bytes,
       );
+
+      _nameController.clear();
+      _descriptionController.clear();
 
       final directory = Directory('storage/emulated/0/Pictures/RAD');
       await directory.create(recursive: true);

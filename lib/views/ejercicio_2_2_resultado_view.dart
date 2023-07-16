@@ -16,15 +16,23 @@ class ImagesList extends StatelessWidget {
         itemCount: signatures.length,
         itemBuilder: (context, index) {
           final signature = signatures[index];
-          return ListTile(
-            title: Text(signature.name),
-            subtitle: Text(signature.description),
-            leading: signature.signature != null
-                ? Image.memory(signature.signature!)
-                : const Icon(Icons.image),
-            onTap: () {
-              // Handle item tap
-            },
+          return Card(
+            child: ListTile(
+              isThreeLine: true,
+              title: Text(
+                signature.name,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              subtitle: Text(signature.description),
+              leading: signature.signature != null
+                  ? Image.memory(signature.signature!)
+                  : const Icon(Icons.image),
+              onTap: () {
+                // Handle item tap
+              },
+            ),
           );
         },
       ),
